@@ -9,6 +9,7 @@ using Microsoft.VisualBasic;
 // '2021-09-23 / B.Agullo / added code to prompt for parameters (code credit to Daniel Otykier) 
 // '2021-09-27 / B.Agullo / added code for general name 
 // '2022-10-11 / B.Agullo / added MMT and MWT calc item groups
+// '2024-06-13 / R.Mason / removed calc item groups that I do not use and added ones that I do use
 //
 // by Bernat Agulló
 // twitter: @AgulloBernat
@@ -31,7 +32,8 @@ string[] preSelectedMeasures = {}; //include measure names in double quotes, lik
 //AT LEAST ONE MEASURE HAS TO BE AFFECTED!, 
 //either by selecting it or typing its name in the preSelectedMeasures Variable
 
-
+// **** NOTE THAT THE MEASURES FOR LABEL FORMATTING ARE NOT WORKING CORRECTLY FOR ANYTHING OUTSIDE OF YEAR CALCS. WILL HAVE TO RETURN 
+// TO THESE AT SOME POINT, BUT LOW PRIORITY FOR NOW - R.MASON ****
 
 //
 // ----- do not modify script below this line -----
@@ -405,7 +407,89 @@ string ITD =
 
     string ITDlabel = Baselabel + "& \" ITD\"";   
 
+string PMTD = 
+    "/*PMTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ MTD + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, MONTH ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";
+    
 
+    string PMTDlabel = 
+    "/*PMTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ MTDlabel + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, MONTH ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";     
+    
+string PQTD = 
+    "/*PQTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ QTD + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, QUARTER ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";
+    
+
+  string PQTDlabel = 
+    "/*PQTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ QTDlabel + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, QUARTER ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";     
+    
+  string PYTD = 
+    "/*PYTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ YTD + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";
+    
+
+    string PYTDlabel = 
+    "/*PYTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ YTDlabel + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") "; 
+    
+       
+    
 string PYMTD = 
     "/*PYMTD*/ " +
     "IF (" + 
@@ -418,7 +502,8 @@ string PYMTD =
     "        ) " + 
     "    ) " + 
     ") ";
-    
+  
+  
 
     string PYMTDlabel = 
     "/*PYMTD*/ " +
@@ -434,9 +519,34 @@ string PYMTD =
     ") "; 
     
     
+    string PYQTD = 
+    "/*PYQTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ QTD + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";
     
-    
-    
+
+    string PYQTDlabel = 
+    "/*PYQTD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ QTDlabel + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") "; 
+       
+  
 
 string PY = 
     "/*PY*/ " +
@@ -518,24 +628,7 @@ string YOYpctLabel =
     " ) " +  
     "RETURN " + 
     "  Result";
-    
-
-
-string PYTD = 
-    "/*PYTD*/" + 
-    "IF ( " + 
-    "    [" + ShowValueForDatesMeasureName + "], " + 
-    "   CALCULATE ( " + 
-    "       " + YTD + "," + 
-    "    CALCULATETABLE ( " + 
-    "        DATEADD ( " + dateColumnWithTable + ", -1, YEAR ), " + 
-    "       " + dateWithSalesWithTable + " = TRUE " +  
-    "       )" + 
-    "   )" + 
-    ") ";
-    
-string PYTDlabel = PYlabel + "& \" YTD\""; 
-
+  
     
 string YOYTD = 
     "/*YOYTD*/" + 
@@ -616,11 +709,14 @@ string[ , ] calcItems =
         {"QTD",     QTD,        defFormatString,    "Quarter-to-date",             QTDlabel},
         {"YTD",     YTD,        defFormatString,    "Year-to-date",             YTDlabel},
         {"ITD",     ITD,        defFormatString,    "Inception-to-date",             ITDlabel},
+        {"PMTD",      PMTD,         defFormatString,    "Previous Mont-to-date",            PMTDlabel},
+        {"PQTD",      PQTD,         defFormatString,    "Previous Quarter-to-date",            PQTDlabel},
+        {"PYTD",      PYTD,         defFormatString,    "Previous Year-to-date",            PYTDlabel},
         {"PYMTD",     PYMTD,        defFormatString,    "Previous year Month-to-date",             PYMTDlabel},
+        {"PYQTD",     PYQTD,        defFormatString,    "Previous year Quarter-to-date",             PYQTDlabel},
         {"PY",      PY,         defFormatString,    "Previous year",            PYlabel},
         {"YOY",     YOY,        defFormatString,    "Year-over-year",           YOYlabel},
         {"YOY%",    YOYpct,     pctFormatString,    "Year-over-year%",          YOYpctLabel},
-        {"PYTD",    PYTD,       defFormatString,    "Previous year-to-date",    PYTDlabel},
         {"YOYTD",   YOYTD,      defFormatString,    "Year-over-year-to-date",   YOYTDlabel},
         {"YOYTD%",  YOYTDpct,   pctFormatString,    "Year-over-year-to-date%",  YOYTDpctLabel}
   
