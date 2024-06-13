@@ -9,8 +9,10 @@ using Microsoft.VisualBasic;
 // '2021-09-23 / B.Agullo / added code to prompt for parameters (code credit to Daniel Otykier) 
 // '2021-09-27 / B.Agullo / added code for general name 
 // '2022-10-11 / B.Agullo / added MMT and MWT calc item groups
-// '2024-06-13 / R.Mason / removed calc item groups that I do not use and added ones that I do use
-//
+// '2024-06-12 / R.Mason / removed calc item groups that I do not use and added ones that I do use
+// '2024-06-13 / R.Mason / added check for Label measures
+
+
 // by Bernat Agulló
 // twitter: @AgulloBernat
 // www.esbrina-ba.com/blog
@@ -270,7 +272,7 @@ calcItemFormatProtection =
     "   SELECTEDMEASUREFORMATSTRING() " + 
     ")";
 
-    
+   
 string dateColumnWithTable = "'" + dateTableName + "'[" + dateTableDateColumnName + "]"; 
 string yearColumnWithTable = "'" + dateTableName + "'[" + dateTableYearColumnName + "]"; 
 string factDateColumnWithTable = "'" + factTableName + "'[" + factTableDateColumnName + "]";
@@ -295,11 +297,41 @@ if (calcGroup.SourceType.ToString() != "CalculationGroup") {
 };
 
 //adds the two measures that will be used for label as value, label as format string 
-var labelAsValueMeasure = calcGroup.AddMeasure(labelAsValueMeasureName,"");
-labelAsValueMeasure.Description = "Use this measure to show the year evaluated in tables"; 
+//built in check to see if the Label measures exists or not. If they exist, then do nothing, otherwise create them.
 
-var labelAsFormatStringMeasure = calcGroup.AddMeasure(labelAsFormatStringMeasureName,"0");
-labelAsFormatStringMeasure.Description = "Use this measure to show the year evaluated in charts"; 
+// Define the measure name to check
+string measureName = "Label as format string";
+string measureName2 = "Label as Value Measure";
+// Use LINQ to check if the measure exists in the model
+bool measureExists = Model.AllMeasures.Any(m => m.Name == measureName);
+bool measureExists2 = Model.AllMeasures.Any(m => m.Name == measureName2);
+
+
+// Output the result of whether each measure already exists. If it does exist, then do nothing, if it doesnt exist
+// then create the measure
+
+    if (measureExists) 
+    {
+        
+   ////if it exists. do nothing!
+   
+    } 
+    else   
+    {
+     var labelAsValueMeasure = calcGroup.AddMeasure(labelAsValueMeasureName,"");
+    }
+ 
+    if (measureExists2) 
+    {
+     ////if it exists. do nothing! 
+    } 
+    else   
+    {
+     var labelAsFormatStringMeasure = calcGroup.AddMeasure(labelAsFormatStringMeasureName,"0");
+    }
+
+//var labelAsFormatStringMeasure = calcGroup.AddMeasure(labelAsFormatStringMeasureName,"0");
+//labelAsFormatStringMeasure.Description = "Use this measure to show the year evaluated in charts"; 
 
 //by default the calc group has a column called Name. If this column is still called Name change this in line with specfied variable
 if (calcGroup.Columns.Contains("Name")) {
@@ -400,10 +432,10 @@ string T3M =
     ") ";
     
 
-    string T3Mlabel = Baselabel + "& \" T3M\"";   
+string T3Mlabel = Baselabel + "& \" T3M\"";   
 
 
-    string TTM = 
+string TTM = 
     "/*TTM*/" + 
     "IF (" +
     "    [" + ShowValueForDatesMeasureName + "]," + 
@@ -431,7 +463,7 @@ string ITD =
     ") ";
     
 
-    string ITDlabel = Baselabel + "& \" ITD\"";   
+string ITDlabel = Baselabel + "& \" ITD\"";   
 
 string PMTD = 
     "/*PMTD*/ " +
@@ -447,7 +479,7 @@ string PMTD =
     ") ";
     
 
-    string PMTDlabel = 
+string PMTDlabel = 
     "/*PMTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -474,7 +506,7 @@ string PQTD =
     ") ";
     
 
-  string PQTDlabel = 
+string PQTDlabel = 
     "/*PQTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -487,7 +519,7 @@ string PQTD =
     "    ) " + 
     ") ";     
     
-  string PYTD = 
+string PYTD = 
     "/*PYTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -501,7 +533,7 @@ string PQTD =
     ") ";
     
 
-    string PYTDlabel = 
+string PYTDlabel = 
     "/*PYTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -531,7 +563,7 @@ string PYMTD =
   
   
 
-    string PYMTDlabel = 
+string PYMTDlabel = 
     "/*PYMTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -545,7 +577,7 @@ string PYMTD =
     ") "; 
     
     
-    string PYQTD = 
+string PYQTD = 
     "/*PYQTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -559,7 +591,7 @@ string PYMTD =
     ") ";
     
 
-    string PYQTDlabel = 
+string PYQTDlabel = 
     "/*PYQTD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -573,7 +605,7 @@ string PYMTD =
     ") "; 
        
     
-       string PYITD = 
+string PYITD = 
        "/*PYITD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -587,7 +619,7 @@ string PYMTD =
     ") ";
     
 
-    string PYITDlabel = 
+string PYITDlabel = 
     "/*PYITD*/ " +
     "IF (" + 
     "    [" + ShowValueForDatesMeasureName + "], " + 
@@ -637,7 +669,7 @@ string ΔQoQ =
     "RETURN " + 
     "   Result ";
 
-    string ΔQoQlabel = 
+string ΔQoQlabel = 
     "/*ΔQoQ*/ " + 
     "VAR ValueCurrentPeriod = " + QTDlabel + " " + 
     "VAR ValuePreviousPeriod = " + PQTDlabel + " " +
@@ -661,7 +693,7 @@ string ΔYoY =
     "RETURN " + 
     "   Result ";
 
-    string ΔYoYlabel = 
+string ΔYoYlabel = 
     "/*ΔYoY*/ " + 
     "VAR ValueCurrentPeriod = " + YTDlabel + " " + 
     "VAR ValuePreviousPeriod = " + PYTDlabel + " " +
@@ -674,35 +706,7 @@ string ΔYoY =
     "   Result ";
   
     
-string PY = 
-    "/*PY*/ " +
-    "IF (" + 
-    "    [" + ShowValueForDatesMeasureName + "], " + 
-    "    CALCULATE ( " + 
-    "        "+ Base + ", " + 
-    "        CALCULATETABLE ( " + 
-    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
-    "            " + dateWithSalesWithTable + " = TRUE " +  
-    "        ) " + 
-    "    ) " + 
-    ") ";
-    
-
-string PYlabel = 
-    "/*PY*/ " +
-    "IF (" + 
-    "    [" + ShowValueForDatesMeasureName + "], " + 
-    "    CALCULATE ( " + 
-    "        "+ Baselabel + ", " + 
-    "        CALCULATETABLE ( " + 
-    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
-    "            " + dateWithSalesWithTable + " = TRUE " +  
-    "        ) " + 
-    "    ) " + 
-    ") ";   
-
-
-    string MOMTDpct = 
+string MOMTDpct = 
     "/*ΔMOM%*/" + 
     "VAR ValueCurrentPeriod = " + MTD + " " + 
     "VAR ValuePreviousPeriod = " + PMTD + " " + 
@@ -720,7 +724,7 @@ string PYlabel =
     "  Result";
 
 
-    string MOMTDpctLabel = 
+string MOMTDpctLabel = 
     "/*ΔMOM%*/ " +
     "VAR ValueCurrentPeriod = " + MTDlabel + " " + 
     "VAR ValuePreviousPeriod = " + PMTDlabel + " " + 
@@ -733,7 +737,7 @@ string PYlabel =
     "  Result";
 
     
-    string QOQTDpct = 
+string QOQTDpct = 
     "/*ΔQOQ%*/" + 
     "VAR ValueCurrentPeriod = " + QTD + " " + 
     "VAR ValuePreviousPeriod = " + PQTD + " " + 
@@ -751,7 +755,7 @@ string PYlabel =
     "  Result";
 
 
-    string QOQTDpctLabel = 
+string QOQTDpctLabel = 
     "/*ΔQOQ%*/ " +
     "VAR ValueCurrentPeriod = " + QTDlabel + " " + 
     "VAR ValuePreviousPeriod = " + PQTDlabel + " " + 
@@ -765,7 +769,7 @@ string PYlabel =
 
     
     
- string YOYTDpct = 
+string YOYTDpct = 
     "/*ΔYOY%*/" + 
     "VAR ValueCurrentPeriod = " + YTD + " " + 
     "VAR ValuePreviousPeriod = " + PYTD + " " + 
@@ -795,7 +799,173 @@ string YOYTDpctLabel =
     "RETURN " + 
     "  Result";
 
+string ΔMoM_PY = 
+    "/*ΔMoM_PY*/ " + 
+    "VAR ValueCurrentPeriod = " + MTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYMTD + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
 
+string ΔMoM_PYlabel = 
+    "/*ΔMoM_PY*/ " + 
+    "VAR ValueCurrentPeriod = " + MTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYMTDlabel + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+string ΔQoQ_PY = 
+    "/*ΔQoQ_PY*/ " + 
+    "VAR ValueCurrentPeriod = " + QTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYQTD + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+string ΔQoQ_PYlabel = 
+    "/*ΔQoQ_PY*/ " + 
+    "VAR ValueCurrentPeriod = " + QTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYQTDlabel + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+    
+string ΔYoY_PY = 
+    "/*ΔYoY_PY*/ " + 
+    "VAR ValueCurrentPeriod = " + YTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYTD + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+string ΔYoY_PYlabel = 
+    "/*ΔYoY_PY*/ " + 
+    "VAR ValueCurrentPeriod = " + YTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYTDlabel + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+  
+    
+string MOMTD_PYpct = 
+    "/*ΔMOM%_PY*/" + 
+    "VAR ValueCurrentPeriod = " + MTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYMTD + " " + 
+    "VAR CurrentMinusPreviousPeriod = " +
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "VAR Result = " + 
+    "DIVIDE ( "  + 
+    "    CurrentMinusPreviousPeriod," + 
+    "    ValuePreviousPeriod" + 
+    ") " + 
+    "RETURN " + 
+    "  Result";
+
+
+string MOMTD_PYpctLabel = 
+    "/*ΔMOM%_PY*/ " +
+    "VAR ValueCurrentPeriod = " + MTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYMTDlabel + " " + 
+    "VAR Result = " +
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod & \" (%)\"" + 
+    " ) " +  
+    "RETURN " + 
+    "  Result";
+
+    
+string QOQTD_PYpct = 
+    "/*ΔQOQ%_PY*/" + 
+    "VAR ValueCurrentPeriod = " + QTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYQTD + " " + 
+    "VAR CurrentMinusPreviousPeriod = " +
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "VAR Result = " + 
+    "DIVIDE ( "  + 
+    "    CurrentMinusPreviousPeriod," + 
+    "    ValuePreviousPeriod" + 
+    ") " + 
+    "RETURN " + 
+    "  Result";
+
+
+string QOQTD_PYpctLabel = 
+    "/*ΔQOQ%_PY*/ " +
+    "VAR ValueCurrentPeriod = " + QTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYQTDlabel + " " + 
+    "VAR Result = " +
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod & \" (%)\"" + 
+    " ) " +  
+    "RETURN " + 
+    "  Result";
+
+    
+    
+ string YOYTD_PYpct = 
+    "/*ΔYOY%_PY*/" + 
+    "VAR ValueCurrentPeriod = " + YTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYTD + " " + 
+    "VAR CurrentMinusPreviousPeriod = " +
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "VAR Result = " + 
+    "DIVIDE ( "  + 
+    "    CurrentMinusPreviousPeriod," + 
+    "    ValuePreviousPeriod" + 
+    ") " + 
+    "RETURN " + 
+    "  Result";
+
+
+string YOYTD_PYpctLabel = 
+    "/*ΔYOY%_PY */ " +
+   "VAR ValueCurrentPeriod = " + YTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYTDlabel + " " + 
+    "VAR Result = " +
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod & \" (%)\"" + 
+    " ) " +  
+    "RETURN " + 
+    "  Result";
+    
+    
 string defFormatString = "SELECTEDMEASUREFORMATSTRING()";
 
 //if the flag expression is already present in the format string, do not change it, otherwise apply % format. 
@@ -829,6 +999,12 @@ string[ , ] calcItems =
         {"ΔMoM%",     MOMTDpct,        pctFormatString,    "Month-over-month %",             MOMTDpctLabel},
         {"ΔQoQ%",     QOQTDpct,        pctFormatString,    "Quarter-over-quarter %",             QOQTDpctLabel},
         {"ΔYoY%",     YOYTDpct,        pctFormatString,    "Year-over-year %",             YOYTDpctLabel},
+        {"ΔMoM (PY)",     ΔMoM_PY,        defFormatString,    "Month-over-previous-year-month",             ΔMoM_PYlabel},
+        {"ΔQoQ (PY)",     ΔQoQ_PY,        defFormatString,    "Quarter-over-previous-year-quarter",             ΔQoQ_PYlabel},
+        {"ΔYoY (PY)",     ΔYoY_PY,        defFormatString,    "Year-over-previous-year",             ΔYoY_PYlabel},
+        {"ΔMoM% (PY)",     MOMTD_PYpct,        pctFormatString,    "Month-over-previous-year-month %",             MOMTD_PYpctLabel},
+        {"ΔQoQ% (PY)",     QOQTD_PYpct,        pctFormatString,    "Quarter-over-previous-year-quarter %",             QOQTD_PYpctLabel},
+        {"ΔYoY% (PY)",     YOYTD_PYpct,        pctFormatString,    "Year-over-previous-year %",             YOYTD_PYpctLabel},
         
 
   
