@@ -117,11 +117,8 @@ if(Model.Tables.Any(t => t.GetAnnotation("@AgulloBernat") == "Time Intel Affecte
 };
 
 
-
-
-
 if(affectedMeasuresColumnName == "") return;
-//string affectedMeasuresColumnName = "Measure"; 
+//string affectedMeasuresColumnName = "Affected Measure"; 
 
 string labelAsValueMeasureName = "Label as Value Measure"; 
 string labelAsFormatStringMeasureName = "Label as format string"; 
@@ -390,6 +387,35 @@ string YTD =
     
 
 string YTDlabel = Baselabel + "& \" YTD\"";   
+
+
+string T3M = 
+    "/*T3M*/" + 
+    "IF (" +
+    "    [" + ShowValueForDatesMeasureName + "]," + 
+    "    CALCULATE (" +
+    "        " + Base + "," + 
+    "        DATESINPERIOD (" +  dateColumnWithTable + ", LASTDATE( " + dateColumnWithTable + " ) , -3 , MONTH )" + 
+    "   )" + 
+    ") ";
+    
+
+    string T3Mlabel = Baselabel + "& \" T3M\"";   
+
+
+    string TTM = 
+    "/*TTM*/" + 
+    "IF (" +
+    "    [" + ShowValueForDatesMeasureName + "]," + 
+    "    CALCULATE (" +
+    "        " + Base + "," + 
+    "        DATESINPERIOD (" +  dateColumnWithTable + ", LASTDATE( " + dateColumnWithTable + " ) , -12 , MONTH )" + 
+    "   )" + 
+    ") ";
+    
+
+    string TTMlabel = Baselabel + "& \" TTM\"";   
+
     
 string ITD = 
     "/*ITD*/" + 
@@ -546,8 +572,108 @@ string PYMTD =
     "    ) " + 
     ") "; 
        
-  
+    
+       string PYITD = 
+       "/*PYITD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ ITD + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") ";
+    
 
+    string PYITDlabel = 
+    "/*PYITD*/ " +
+    "IF (" + 
+    "    [" + ShowValueForDatesMeasureName + "], " + 
+    "    CALCULATE ( " + 
+    "        "+ ITDlabel + ", " + 
+    "        CALCULATETABLE ( " + 
+    "            DATEADD ( " + dateColumnWithTable + " , -1, YEAR ), " + 
+    "            " + dateWithSalesWithTable + " = TRUE " +  
+    "        ) " + 
+    "    ) " + 
+    ") "; 
+       
+
+string ΔMoM = 
+    "/*ΔMoM*/ " + 
+    "VAR ValueCurrentPeriod = " + MTD + " " + 
+    "VAR ValuePreviousPeriod = " + PMTD + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+string ΔMoMlabel = 
+    "/*ΔMoM*/ " + 
+    "VAR ValueCurrentPeriod = " + MTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PMTDlabel + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+string ΔQoQ = 
+    "/*ΔQoQ*/ " + 
+    "VAR ValueCurrentPeriod = " + QTD + " " + 
+    "VAR ValuePreviousPeriod = " + PQTD + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+    string ΔQoQlabel = 
+    "/*ΔQoQ*/ " + 
+    "VAR ValueCurrentPeriod = " + QTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PQTDlabel + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+    
+string ΔYoY = 
+    "/*ΔYoY*/ " + 
+    "VAR ValueCurrentPeriod = " + YTD + " " + 
+    "VAR ValuePreviousPeriod = " + PYTD + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+
+    string ΔYoYlabel = 
+    "/*ΔYoY*/ " + 
+    "VAR ValueCurrentPeriod = " + YTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PYTDlabel + " " +
+    "VAR Result = " + 
+    "IF ( " + 
+    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    " ) " +  
+    "RETURN " + 
+    "   Result ";
+  
+    
 string PY = 
     "/*PY*/ " +
     "IF (" + 
@@ -576,34 +702,10 @@ string PYlabel =
     ") ";   
 
 
-string YOY = 
-    "/*YOY*/ " + 
-    "VAR ValueCurrentPeriod = " + Base + " " + 
-    "VAR ValuePreviousPeriod = " + PY + " " +
-    "VAR Result = " + 
-    "IF ( " + 
-    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
-    "     ValueCurrentPeriod - ValuePreviousPeriod" + 
-    " ) " +  
-    "RETURN " + 
-    "   Result ";
-
-string YOYlabel = 
-    "/*YOY*/ " + 
-    "VAR ValueCurrentPeriod = " + Baselabel + " " + 
-    "VAR ValuePreviousPeriod = " + PYlabel + " " +
-    "VAR Result = " + 
-    "IF ( " + 
-    "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
-    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
-    " ) " +  
-    "RETURN " + 
-    "   Result ";
-
-string YOYpct = 
-    "/*YOY%*/ " +
-   "VAR ValueCurrentPeriod = " + Base + " " + 
-    "VAR ValuePreviousPeriod = " + PY + " " + 
+    string MOMTDpct = 
+    "/*ΔMOM%*/" + 
+    "VAR ValueCurrentPeriod = " + MTD + " " + 
+    "VAR ValuePreviousPeriod = " + PMTD + " " + 
     "VAR CurrentMinusPreviousPeriod = " +
     "IF ( " + 
     "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
@@ -617,10 +719,11 @@ string YOYpct =
     "RETURN " + 
     "  Result";
 
-string YOYpctLabel = 
-    "/*YOY%*/ " +
-   "VAR ValueCurrentPeriod = " + Baselabel + " " + 
-    "VAR ValuePreviousPeriod = " + PYlabel + " " + 
+
+    string MOMTDpctLabel = 
+    "/*ΔMOM%*/ " +
+    "VAR ValueCurrentPeriod = " + MTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PMTDlabel + " " + 
     "VAR Result = " +
     "IF ( " + 
     "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
@@ -628,37 +731,42 @@ string YOYpctLabel =
     " ) " +  
     "RETURN " + 
     "  Result";
-  
+
     
-string YOYTD = 
-    "/*YOYTD*/" + 
-    "VAR ValueCurrentPeriod = " + YTD + " " + 
-    "VAR ValuePreviousPeriod = " + PYTD + " " + 
-    "VAR Result = " + 
+    string QOQTDpct = 
+    "/*ΔQOQ%*/" + 
+    "VAR ValueCurrentPeriod = " + QTD + " " + 
+    "VAR ValuePreviousPeriod = " + PQTD + " " + 
+    "VAR CurrentMinusPreviousPeriod = " +
     "IF ( " + 
     "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
     "     ValueCurrentPeriod - ValuePreviousPeriod" + 
     " ) " +  
-    "RETURN " + 
-    "   Result ";
-
-
-string YOYTDlabel = 
-    "/*YOYTD*/" + 
-    "VAR ValueCurrentPeriod = " + YTDlabel + " " + 
-    "VAR ValuePreviousPeriod = " + PYTDlabel + " " + 
     "VAR Result = " + 
+    "DIVIDE ( "  + 
+    "    CurrentMinusPreviousPeriod," + 
+    "    ValuePreviousPeriod" + 
+    ") " + 
+    "RETURN " + 
+    "  Result";
+
+
+    string QOQTDpctLabel = 
+    "/*ΔQOQ%*/ " +
+    "VAR ValueCurrentPeriod = " + QTDlabel + " " + 
+    "VAR ValuePreviousPeriod = " + PQTDlabel + " " + 
+    "VAR Result = " +
     "IF ( " + 
     "    NOT ISBLANK ( ValueCurrentPeriod ) && NOT ISBLANK ( ValuePreviousPeriod ), " + 
-    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod" + 
+    "     ValueCurrentPeriod & \" vs \" & ValuePreviousPeriod & \" (%)\"" + 
     " ) " +  
     "RETURN " + 
-    "   Result ";
+    "  Result";
 
-
-
-string YOYTDpct = 
-    "/*YOYTD%*/" + 
+    
+    
+ string YOYTDpct = 
+    "/*ΔYOY%*/" + 
     "VAR ValueCurrentPeriod = " + YTD + " " + 
     "VAR ValuePreviousPeriod = " + PYTD + " " + 
     "VAR CurrentMinusPreviousPeriod = " +
@@ -676,7 +784,7 @@ string YOYTDpct =
 
 
 string YOYTDpctLabel = 
-    "/*YOY%*/ " +
+    "/*ΔYOY%*/ " +
    "VAR ValueCurrentPeriod = " + YTDlabel + " " + 
     "VAR ValuePreviousPeriod = " + PYTDlabel + " " + 
     "VAR Result = " +
@@ -686,8 +794,6 @@ string YOYTDpctLabel =
     " ) " +  
     "RETURN " + 
     "  Result";
-
-
 
 
 string defFormatString = "SELECTEDMEASUREFORMATSTRING()";
@@ -709,16 +815,22 @@ string[ , ] calcItems =
         {"QTD",     QTD,        defFormatString,    "Quarter-to-date",             QTDlabel},
         {"YTD",     YTD,        defFormatString,    "Year-to-date",             YTDlabel},
         {"ITD",     ITD,        defFormatString,    "Inception-to-date",             ITDlabel},
-        {"PMTD",      PMTD,         defFormatString,    "Previous Mont-to-date",            PMTDlabel},
+        {"T3M",     T3M,        defFormatString,    "Trailing 3-months",             T3Mlabel},
+        {"TTM",     TTM,        defFormatString,    "Trailing 12-months",             TTMlabel},
+        {"PMTD",      PMTD,         defFormatString,    "Previous Month-to-date",            PMTDlabel},
         {"PQTD",      PQTD,         defFormatString,    "Previous Quarter-to-date",            PQTDlabel},
         {"PYTD",      PYTD,         defFormatString,    "Previous Year-to-date",            PYTDlabel},
         {"PYMTD",     PYMTD,        defFormatString,    "Previous year Month-to-date",             PYMTDlabel},
         {"PYQTD",     PYQTD,        defFormatString,    "Previous year Quarter-to-date",             PYQTDlabel},
-        {"PY",      PY,         defFormatString,    "Previous year",            PYlabel},
-        {"YOY",     YOY,        defFormatString,    "Year-over-year",           YOYlabel},
-        {"YOY%",    YOYpct,     pctFormatString,    "Year-over-year%",          YOYpctLabel},
-        {"YOYTD",   YOYTD,      defFormatString,    "Year-over-year-to-date",   YOYTDlabel},
-        {"YOYTD%",  YOYTDpct,   pctFormatString,    "Year-over-year-to-date%",  YOYTDpctLabel}
+        {"PYITD",     PYITD,        defFormatString,    "Previous year Inception-to-date",             PYITDlabel},
+        {"ΔMoM",     ΔMoM,        defFormatString,    "Month-over-month",             ΔMoMlabel},
+        {"ΔQoQ",     ΔQoQ,        defFormatString,    "Quarter-over-quarter",             ΔQoQlabel},
+        {"ΔYoY",     ΔYoY,        defFormatString,    "Year-over-year",             ΔYoYlabel},
+        {"ΔMoM%",     MOMTDpct,        pctFormatString,    "Month-over-month %",             MOMTDpctLabel},
+        {"ΔQoQ%",     QOQTDpct,        pctFormatString,    "Quarter-over-quarter %",             QOQTDpctLabel},
+        {"ΔYoY%",     YOYTDpct,        pctFormatString,    "Year-over-year %",             YOYTDpctLabel},
+        
+
   
     };
 
