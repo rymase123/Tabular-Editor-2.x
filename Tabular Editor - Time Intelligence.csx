@@ -10,7 +10,8 @@ using Microsoft.VisualBasic;
 // '2021-09-27 / B.Agullo / added code for general name 
 // '2022-10-11 / B.Agullo / added MMT and MWT calc item groups
 // '2024-06-12 / R.Mason / removed calc item groups that I do not use and added ones that I do use
-// '2024-06-13 / R.Mason / added check for Label measures
+// '2024-06-13 / R.Mason / added check for Label measures. Also added code to impact all measures, but you can edit the table after the fact
+
 
 
 // by Bernat Agulló
@@ -56,17 +57,25 @@ for (i=0;i<preSelectedMeasures.GetLength(0);i++){
     
 };
 
+//*** this part of the code lets you select the measures to load to the Time Intellegence Affected Measures table  (the impacted measures)
 
-if (Selected.Measures.Count != 0) {
-    
-    foreach(var m in Selected.Measures) {
+//if (Selected.Measures.Count != 0) {
+// foreach(var m in Selected.Measures) {
+
+// dont forget to close the bracket below the foreach code
+
+//***    
+
+foreach(var m in Model.AllMeasures) { // if you just want load all the measures, use this code. Otherwise replace with the Selected.Measures code above.
         if(affectedMeasures == "{") {
         affectedMeasures = affectedMeasures + "\"" + m.Name + "\"";
         }else{
             affectedMeasures = affectedMeasures + ",\"" + m.Name + "\"" ;
         };
     };  
-};
+// if you use the Selected.Measures code, then make sure you close the curly bracket:
+//};
+
 
 //check that by either method at least one measure is affected
 if(affectedMeasures == "{") { 
