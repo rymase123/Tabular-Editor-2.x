@@ -27,12 +27,36 @@ try
                 "Select the Column with the Latest Date:"
             ).DaxObjectFullName;
         
+// R.Mason - check if Measure exists already.
+            
+//Define the measure name to check
+
+ string measureName = "RefDate";
+
+// Use LINQ to check if the measure exists in the model
+bool measureExists = Model.AllMeasures.Any(m => m.Name == measureName);
+
+// Output the result of whether each measure already exists. If it does exist, then do nothing, if it doesnt exist
+// then create the measure
+
+    if (measureExists) 
+    {
         
+   ////if it exists. do nothing!
+   
+    } 
+    else   
+    {
         // Create measure for reference date
         var _RefDateMeasure = _dateColumns[0].Table.AddMeasure(
             "RefDate",
             "CALCULATE ( MAX ( " + _LatestDate + " ), REMOVEFILTERS ( ) )"
         );
+    }
+     
+     
+            
+
         
         
         // Formatted date table DAX
