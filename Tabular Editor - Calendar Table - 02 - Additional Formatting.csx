@@ -1,20 +1,25 @@
+// Prompt for calendar table selection
+
+var dateTable = SelectTable(label: "Select your date table");
+if(dateTable == null) return;
 
 // Set the sort by column
 
-(Selected.Table.Columns["Quarter"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Year Quarter"] as CalculatedTableColumn);
-(Selected.Table.Columns["Month Name"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Month Number"] as CalculatedTableColumn);
+
+(dateTable.Columns["Quarter"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Year Quarter"] as CalculatedTableColumn);
+(dateTable.Columns["Month Name"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Month Number"] as CalculatedTableColumn);
 
 // Create Hierarchy
-var h = Selected.Table.AddHierarchy("Calendar Hierarchy");
+var h = dateTable.AddHierarchy("Calendar Hierarchy");
 h.AddLevel("Year");
 h.AddLevel("Quarter");
 h.AddLevel("Month");
 h.AddLevel("Date");
 
 // Assign Columns to Folders
-foreach( var t in Selected.Tables )
+
     
-        foreach (var c in t.Columns )
+        foreach (var c in dateTable.Columns )
         {
         c.DisplayFolder = "5. Boolean Fields";
         c.IsHidden = true;
