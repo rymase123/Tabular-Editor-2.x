@@ -57,6 +57,7 @@ string factTableDateColumnName = factTableDateColumn.Name;
 var fromColumn = Model.Tables[factTableName].Columns[factTableDateColumnName] ; // Enter the 'from' part of the relationship
 var toColumn = Model.Tables[dateTableName].Columns[dateTableDateColumnName ]; // Enter the 'to' part of the relationship
 
+fromColumn.IsHidden = true; //hides the date column in the fromColumn (Fact) table
 {
     var r = Model.AddRelationship();
     r.FromColumn = fromColumn;
@@ -64,4 +65,5 @@ var toColumn = Model.Tables[dateTableName].Columns[dateTableDateColumnName ]; //
     r.FromCardinality = RelationshipEndCardinality.Many;
     r.ToCardinality = RelationshipEndCardinality.One;
     r.CrossFilteringBehavior = CrossFilteringBehavior.OneDirection; //CrossFilteringBehavior.BothDirections
+    
 }
