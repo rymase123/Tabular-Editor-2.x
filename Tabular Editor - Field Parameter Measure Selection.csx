@@ -3,6 +3,7 @@
 // objects). Also, you may change the name of the field parameter table
 // below. NOTE: If used against Power BI Desktop, you must enable unsupported
 // features under File > Preferences (TE2) or Tools > Preferences (TE3).
+// originally sourced from https://docs.tabulareditor.com/common/CSharpScripts/Beginner/script-create-field-parameter.html and edited by R.Mason
 
 
 var name = "Parameter - Measure Selection";
