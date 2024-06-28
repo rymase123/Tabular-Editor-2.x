@@ -1,4 +1,6 @@
-﻿{
+// Save this in the C:\Users\User.Name\AppData\Local\TabularEditor folder 
+
+{
   "Actions": [
     {
       "Name": "Calculation Group - Create Calculation Items for all measure (like Field Parameters)",
