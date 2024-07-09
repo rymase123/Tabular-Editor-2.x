@@ -1,6 +1,4 @@
-// Save this in the C:\Users\User.Name\AppData\Local\TabularEditor folder 
-
-{
+﻿{
   "Actions": [
     {
       "Name": "Calculation Group - Create Calculation Items for all measure (like Field Parameters)",
@@ -45,20 +43,6 @@
       "ValidContexts": "Measure, CalculationGroupTable, CalculationItem"
     },
     {
-      "Name": "Simple - Edit/Replace Code Inside All DAX Measures ",
-      "Enabled": "true",
-      "Execute": "/*Warning!  Take a backup copy first.  \r\nThis script will operate over every measure in the model. It is \r\nessential that your FromString and ToString are set to change only the\r\nspecific usage of the string that you need to change across the entire model. Selected.Measures will alter for selected measures*/\r\nvar FromString = \"CALCULATE(SUM(Sales[ExtendedAmount])\";\r\nvar ToString = \"CALCULATE([Total Sales]\";\r\nforeach (var m in Selected.Measures)\r\n    {\r\n        m.Expression = m.Expression.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString */\r\n    }",
-      "Tooltip": "Edit/Replace Code Inside All DAX Measures ",
-      "ValidContexts": "Measure"
-    },
-    {
-      "Name": "Simple - Edit/Replace Code Inside All DAX Measures and Rename Measure",
-      "Enabled": "true",
-      "Execute": "/*Warning!  Take a backup copy first.  \r\nThis script will operate over every measure in the model. It is \r\nessential that your FromString and ToString are set to change only the\r\nspecific usage of the string that you need to change across the entire model. Selected.Measures will alter for selected measures*/\r\nvar FromString = \"AES\";\r\nvar ToString = \"SWP\";\r\nvar OneString = \"1\";\r\nvar BlankString = \"\";\r\n\r\nforeach (var m in Selected.Measures)\r\n    {\r\n        m.Expression = m.Expression.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString */\r\n\r\n        m.Name = m.Name.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString in the measure names*/\r\n           \r\n        m.Name = m.Name.Replace(OneString,BlankString);\r\n           \r\n    }",
-      "Tooltip": "Edit/Replace Code Inside All DAX Measures ",
-      "ValidContexts": "Measure"
-    },
-    {
       "Name": "Field Parameter - Create Parameters from Measures",
       "Enabled": "true",
       "Execute": "// Before running the script, select the measures or columns that you\r\n// would like to use as field parameters (hold down CTRL to select multiple\r\n// objects). Also, you may change the name of the field parameter table\r\n// below. NOTE: If used against Power BI Desktop, you must enable unsupported\r\n// features under File > Preferences (TE2) or Tools > Preferences (TE3).\r\n// originally sourced from https://docs.tabulareditor.com/common/CSharpScripts/Beginner/script-create-field-parameter.html and edited by R.Mason\r\n// this generates the field parameter, but you can go edit the results in Power BI or Tabular editor after the fact\r\n\r\nvar name = \"Parameter - Measure Selection\";\r\n\r\n// Construct the DAX for the calculated table based on the current selection:\r\n//var objects =  Model.AllMeasures ;\r\n\r\n// If no measures have been selected in Tabular Editor, the return all measures otherwise return only the selected measures.\r\n\r\nvar objects = Selected.Measures.Count == 0 ? Model.AllMeasures : Selected.Measures;\r\n\r\n\r\nvar dax = \"{\\n    \" + string.Join(\",\\n    \", objects.Select((c,i) => string.Format(\"(\\\"{0}\\\", NAMEOF('{1}'[{0}]), {2})\", c.Name, c.Table.Name, i))) + \"\\n}\";\r\n\r\n// Add the calculated table to the model:\r\nvar table = Model.AddCalculatedTable(name, dax);\r\n\r\n// In TE2 columns are not created automatically from a DAX expression, so \r\n// we will have to add them manually:\r\nvar te2 = table.Columns.Count == 0;\r\nvar nameColumn = te2 ? table.AddCalculatedTableColumn(name, \"[Value1]\") : table.Columns[\"Value1\"] as CalculatedTableColumn;\r\nvar fieldColumn = te2 ? table.AddCalculatedTableColumn(name + \" Fields\", \"[Value2]\") : table.Columns[\"Value2\"] as CalculatedTableColumn;\r\nvar orderColumn = te2 ? table.AddCalculatedTableColumn(name + \" Order\", \"[Value3]\") : table.Columns[\"Value3\"] as CalculatedTableColumn;\r\n\r\nif(!te2) {\r\n    // Rename the columns that were added automatically in TE3:\r\n    nameColumn.IsNameInferred = false;\r\n    nameColumn.Name = name;\r\n    fieldColumn.IsNameInferred = false;\r\n    fieldColumn.Name = name + \" Fields\";\r\n    orderColumn.IsNameInferred = false;\r\n    orderColumn.Name = name + \" Order\";\r\n}\r\n// Set remaining properties for field parameters to work\r\n// See: https://twitter.com/markbdi/status/1526558841172893696\r\nnameColumn.SortByColumn = orderColumn;\r\nnameColumn.GroupByColumns.Add(fieldColumn);\r\nfieldColumn.SortByColumn = orderColumn;\r\nfieldColumn.SetExtendedProperty(\"ParameterMetadata\", \"{\\\"version\\\":3,\\\"kind\\\":2}\", ExtendedPropertyType.Json);\r\nfieldColumn.IsHidden = true;\r\norderColumn.IsHidden = true;\r\n",
@@ -66,25 +50,18 @@
       "ValidContexts": "Model, Table, Measure"
     },
     {
-      "Name": "Simple - Format DAX",
-      "Enabled": "true",
-      "Execute": "foreach(var m in Model.AllMeasures)\r\n{\r\n    m.FormatDax();\r\n}",
-      "Tooltip": "",
-      "ValidContexts": "Model"
-    },
-    {
-      "Name": "Simple - Measure detail in description",
-      "Enabled": "true",
-      "Execute": "foreach (var m in Model.AllMeasures)\r\n{ m.Description = m.Expression; }",
-      "Tooltip": "",
-      "ValidContexts": "Model"
-    },
-    {
       "Name": "Simple - Change Measure Names",
       "Enabled": "true",
       "Execute": "var FromString = \"Fixed Assets (Net)\";\r\nvar ToString = \"Net Fixed Assets\";\r\nforeach (var m in Selected.Measures)\r\n    {\r\n        m.Name = m.Name.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString in the measure names*/\r\n    }",
       "Tooltip": "Change Text in All Measure Names",
       "ValidContexts": "Measure"
+    },
+    {
+      "Name": "Simple - Create Calculation Group",
+      "Enabled": "true",
+      "Execute": "var cg = Model.AddCalculationGroup(\"Value Presentation\");\r\n\r\ncg.AddCalculationItem(\"IFERROR( DIVIDE( SELECTEDMEASURE() , [Total] , 0 ) , SELECTEDMEASURE())\");\r\n\r\ncg.AddCalculationItem(\"Base\", \"SELECTEDMEASURE()\");\r\n\r\ncg.AddCalculationItem(\"Thousands's\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000, 0 ) , SELECTEDMEASURE())\");\r\n\r\ncg.AddCalculationItem(\"Million's\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 10000000, 0 ) , SELECTEDMEASURE())\");",
+      "Tooltip": "",
+      "ValidContexts": "Measure, CalculationGroupTable, CalculationItem"
     },
     {
       "Name": "Simple - Create Measure based on Selection",
@@ -113,6 +90,55 @@
       "Execute": "foreach(var t in Selected.Tables)\r\n{\r\n    var newMeasure = t.AddMeasure(\r\n        \"Sum of \" ,                    // Name\r\n        @\"VAR TEST_ = \r\n        SELECTEDMEASURENAME () = \r\n        SELECTEDVALUE ( 'Sort Parameter - Measure Selection (Calculation Group)'[Name] ) \r\n        RETURN CALCULATE ( TEST_ )\"    // DAX expression\r\n                             // Display Folder\r\n    );\r\n    \r\n    // Set the format string on the new measure:\r\n    newMeasure.FormatString = \"0.00\";\r\n\r\n    // Provide some documentation:\r\n    newMeasure.Description = \"This measure is the sum of column \" ;\r\n}",
       "Tooltip": "",
       "ValidContexts": "Measure"
+    },
+    {
+      "Name": "Simple - Edit/Replace Code Inside All DAX Measures ",
+      "Enabled": "true",
+      "Execute": "/*Warning!  Take a backup copy first.  \r\nThis script will operate over every measure in the model. It is \r\nessential that your FromString and ToString are set to change only the\r\nspecific usage of the string that you need to change across the entire model. Selected.Measures will alter for selected measures*/\r\nvar FromString = \"CALCULATE(SUM(Sales[ExtendedAmount])\";\r\nvar ToString = \"CALCULATE([Total Sales]\";\r\nforeach (var m in Selected.Measures)\r\n    {\r\n        m.Expression = m.Expression.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString */\r\n    }",
+      "Tooltip": "Edit/Replace Code Inside All DAX Measures ",
+      "ValidContexts": "Measure"
+    },
+    {
+      "Name": "Simple - Edit/Replace Code Inside All DAX Measures and Rename Measure",
+      "Enabled": "true",
+      "Execute": "/*Warning!  Take a backup copy first.  \r\nThis script will operate over every measure in the model. It is \r\nessential that your FromString and ToString are set to change only the\r\nspecific usage of the string that you need to change across the entire model. Selected.Measures will alter for selected measures*/\r\nvar FromString = \"AES\";\r\nvar ToString = \"SWP\";\r\nvar OneString = \"1\";\r\nvar BlankString = \"\";\r\n\r\nforeach (var m in Selected.Measures)\r\n    {\r\n        m.Expression = m.Expression.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString */\r\n\r\n        m.Name = m.Name.Replace(FromString,ToString);\r\n        /* Cycle over all measures in model and replaces the \r\n           FromString with the ToString in the measure names*/\r\n           \r\n        m.Name = m.Name.Replace(OneString,BlankString);\r\n           \r\n    }",
+      "Tooltip": "Edit/Replace Code Inside All DAX Measures ",
+      "ValidContexts": "Measure"
+    },
+    {
+      "Name": "Simple - Format DAX",
+      "Enabled": "true",
+      "Execute": "foreach(var m in Model.AllMeasures)\r\n{\r\n    m.FormatDax();\r\n}",
+      "Tooltip": "",
+      "ValidContexts": "Model"
+    },
+    {
+      "Name": "Simple - Measure detail in description",
+      "Enabled": "true",
+      "Execute": "foreach (var m in Model.AllMeasures)\r\n{ m.Description = m.Expression; }",
+      "Tooltip": "",
+      "ValidContexts": "Model"
+    },
+    {
+      "Name": "work in progress",
+      "Enabled": "true",
+      "Execute": "\r\n// estblish the context table & column as well as table with measure to be totalled\r\n\r\nvar factTable = SelectTable(label: \"Select your table that you wish to use for context of Total\");\r\nif(factTable == null) return;\r\n\r\nvar factTableName = factTable.Name ;\r\n\r\nvar factTableColumn = SelectColumn(factTable.Columns, label: \"Select the column you wish to use for context for Total\");\r\nif(factTableColumn == null) return;\r\n\r\nvar factTableColumnName = factTableColumn.Name ;\r\n\r\nvar factTableMeasure = SelectTable(label: \"Select your table that contains your measure\");\r\nif(factTableMeasure == null) return;\r\n\r\nvar factTableNameMeasure = factTableMeasure.Name ;\r\n\r\n//var factMeasure = SelectMeasure(factTableMeasure.Measures, label: \"Select the measure\");\r\n//if(factMeasure == null) return;\r\n\r\n//var factMeasureName = factMeasure.Name ;\r\n\r\n\r\nTable TableCandidate = null;\r\n\r\n//;\r\n                \r\n// creates the total measure for ALLSELECTED\r\n\r\n//{\r\n    //    var newMeasure = factTable.AddMeasure(\r\n    //    \"Total (Based on All Selected from Context Column \" + factTableColumnName + \")\" ,                    // Name\r\n    //    \"CALCULATE([\" +  factMeasureName + \"] , ALLSELECTED( '\" + factTableName  + \"'[\" + factTableColumnName + \"]))\"   // DAX expression\r\n                             // Display Folder\r\n                             //    );\r\n    // Set the format string on the new measure:\r\n    //    newMeasure.FormatString = \"#,0\";\r\n    \r\n    //    newMeasure.IsHidden = true ; \r\n    // Provide some documentation:\r\n    //    newMeasure.Description = \"This measure is the sum of column \" ;\r\n//}\r\n\r\n\r\nvar cg = Model.AddCalculationGroup(\"Value Presentation\");\r\n\r\nvar cg_pct_total = cg.AddCalculationItem(\"% of Total (As Selected)\" , \"IFERROR( DIVIDE( SELECTEDMEASURE() , CALCULATE( SELECTEDMEASURE() , ALLSELECTED( '\" + factTableName  + \"'[\" + factTableColumnName + \"]) )  , 0 ) , SELECTEDMEASURE())\");\r\ncg_pct_total.FormatStringExpression = \"\\\"0.00%\\\"\"; \r\ncg_pct_total.Ordinal = 0 ; \r\n\r\nvar cg_base = cg.AddCalculationItem(\"Base\", \"SELECTEDMEASURE()\");\r\ncg_base.FormatStringExpression = \"\\\"#,0\\\"\"; ;\r\ncg_base.Ordinal = 1 ; \r\n\r\nvar cg_thous = cg.AddCalculationItem(\"Thousands\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000, 0 ) , SELECTEDMEASURE())\");\r\ncg_thous.FormatStringExpression = \"\\\"#,0\\\"\"; \r\ncg_thous.Ordinal = 2 ; \r\n\r\nvar cg_mill = cg.AddCalculationItem(\"Millions\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000000, 0 ) , SELECTEDMEASURE())\");\r\ncg_mill.FormatStringExpression = \"\\\"#,0.0\\\"\" ;\r\ncg_mill.Ordinal = 3 ; \r\n\r\n\r\n",
+      "Tooltip": "",
+      "ValidContexts": "Model, Measure, CalculationGroupTable, CalculationItem"
+    },
+    {
+      "Name": "work in progressV2",
+      "Enabled": "true",
+      "Execute": "\r\n// estblish the context table & column as well as table with measure to be totalled\r\n\r\nvar factTable = SelectTable(label: \"Select your table that you wish to use for context of Total\");\r\nif(factTable == null) return;\r\n\r\nvar factTableName = factTable.Name ;\r\n\r\nvar factTableColumn = SelectColumn(factTable.Columns, label: \"Select the column you wish to use for context for Total\");\r\nif(factTableColumn == null) return;\r\n\r\nvar factTableColumnName = factTableColumn.Name ;\r\n\r\nvar factTableMeasure = SelectTable(label: \"Select your table that contains your measure\");\r\nif(factTableMeasure == null) return;\r\n\r\nvar factTableNameMeasure = factTableMeasure.Name ;\r\n\r\nvar factMeasure = SelectMeasure(factTableMeasure.Measures, label: \"Select the measure\");\r\nif(factMeasure == null) return;\r\n\r\nvar factMeasureName = factMeasure.Name ;\r\n\r\n\r\nTable TableCandidate = null;\r\n\r\n//;\r\n                \r\n// creates the total measure for ALLSELECTED\r\n\r\n//{\r\n    //    var newMeasure = factTable.AddMeasure(\r\n    //    \"Total (Based on All Selected from Context Column \" + factTableColumnName + \")\" ,                    // Name\r\n    //    \"CALCULATE([\" +  factMeasureName + \"] , ALLSELECTED( '\" + factTableName  + \"'[\" + factTableColumnName + \"]))\"   // DAX expression\r\n                             // Display Folder\r\n                             //    );\r\n    // Set the format string on the new measure:\r\n    //    newMeasure.FormatString = \"#,0\";\r\n    \r\n    //    newMeasure.IsHidden = true ; \r\n    // Provide some documentation:\r\n    //    newMeasure.Description = \"This measure is the sum of column \" ;\r\n//}\r\n\r\n\r\nvar cg = Model.AddCalculationGroup(\"Value Presentation\");\r\n\r\nvar cg_pct_total = cg.AddCalculationItem(\"% of Total (As Selected)\" , \"IFERROR( DIVIDE( SELECTEDMEASURE() , CALCULATE( SELECTEDMEASURE() , ALLSELECTED( '\" + factTableName  + \"'[\" + factTableColumnName + \"]) )  , 0 ) , SELECTEDMEASURE())\");\r\ncg_pct_total.FormatStringExpression = \"\\\"0.00%\\\"\"; \r\ncg_pct_total.Ordinal = 0 ; \r\n\r\nvar cg_base = cg.AddCalculationItem(\"Base\", \"SELECTEDMEASURE()\");\r\ncg_base.FormatStringExpression = \"\\\"#,0\\\"\"; \r\ncg_base.Ordinal = 1 ; \r\n\r\nvar cg_thous = cg.AddCalculationItem(\"Thousands\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000, 0 ) , SELECTEDMEASURE())\");\r\ncg_thous.FormatStringExpression = \"\\\"#,0\\\"\"; \r\ncg_thous.Ordinal = 2 ; \r\n\r\nvar cg_mill = cg.AddCalculationItem(\"Millions\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000000, 0 ) , SELECTEDMEASURE())\");\r\ncg_mill.FormatStringExpression = \"\\\"#,0.0\\\"\" ;\r\ncg_mill.Ordinal = 3 ; \r\n\r\nvar cg_pct_of_other = cg.AddCalculationItem(\"% of \" + factMeasureName + \" Measure\" , \" IFERROR( DIVIDE( SELECTEDMEASURE() , CALCULATE([\" +  factMeasureName + \"] )  , 0 ) , SELECTEDMEASURE())\");\r\ncg_pct_of_other.FormatStringExpression = \"\\\"0.00%\\\"\"; \r\ncg_pct_of_other.Ordinal = 4 ; \r\n\r\n",
+      "Tooltip": "",
+      "ValidContexts": "Model, Measure, CalculationGroupTable, CalculationItem"
+    },
+    {
+      "Name": "Calculation Group - Create Value Presentation Caclulation Group",
+      "Enabled": "true",
+      "Execute": "\r\n// estblish the context table & column as well as table with measure to be totalled\r\n\r\nvar factTable = SelectTable(label: \"Select your table that you wish to use for context of Total\");\r\nif(factTable == null) return;\r\n\r\nvar factTableName = factTable.Name ;\r\n\r\nvar factTableColumn = SelectColumn(factTable.Columns, label: \"Select the column you wish to use for context for Total\");\r\nif(factTableColumn == null) return;\r\n\r\nvar factTableColumnName = factTableColumn.Name ;\r\n\r\nvar factTableMeasure = SelectTable(label: \"Select your table that contains your measure\");\r\nif(factTableMeasure == null) return;\r\n\r\nvar factTableNameMeasure = factTableMeasure.Name ;\r\n\r\nvar factMeasure = SelectMeasure(factTableMeasure.Measures, label: \"Select the measure\");\r\nif(factMeasure == null) return;\r\n\r\nvar factMeasureName = factMeasure.Name ;\r\n\r\n\r\nTable TableCandidate = null;\r\n\r\n// creates Calculation Items\r\n\r\nvar cg = Model.AddCalculationGroup(\"Value Presentation\");\r\n\r\n// Percent of Total by All Selected \r\nvar cg_pct_total = cg.AddCalculationItem(\"% of Total (As Selected)\" , \"IFERROR( DIVIDE( SELECTEDMEASURE() , CALCULATE( SELECTEDMEASURE() , ALLSELECTED( '\" + factTableName  + \"'[\" + factTableColumnName + \"]) )  , 0 ) , SELECTEDMEASURE())\");\r\ncg_pct_total.FormatStringExpression = \"\\\"0.00%\\\"\"; \r\ncg_pct_total.Ordinal = 0 ; \r\n\r\n\r\n// Base\r\nvar cg_base = cg.AddCalculationItem(\"Base\", \"SELECTEDMEASURE()\");\r\ncg_base.FormatStringExpression = \"\\\"#,0\\\"\"; \r\ncg_base.Ordinal = 1 ; \r\n\r\n// Thousands\r\nvar cg_thous = cg.AddCalculationItem(\"Thousands\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000, 0 ) , SELECTEDMEASURE())\");\r\ncg_thous.FormatStringExpression = \"\\\"#,0\\\"\"; \r\ncg_thous.Ordinal = 2 ; \r\n\r\n// Millions\r\nvar cg_mill = cg.AddCalculationItem(\"Millions\", \"IFERROR( DIVIDE ( SELECTEDMEASURE (), 1000000, 0 ) , SELECTEDMEASURE())\");\r\ncg_mill.FormatStringExpression = \"\\\"#,0.0\\\"\" ;\r\ncg_mill.Ordinal = 3 ; \r\n\r\n// Percent of Other Selected Measures (Excample: Selected Measure as a percent of Revenue Measure\r\nvar cg_pct_of_other = cg.AddCalculationItem(\"% of \" + factMeasureName + \" Measure\" , \" IFERROR( DIVIDE( SELECTEDMEASURE() , CALCULATE([\" +  factMeasureName + \"] )  , 0 ) , SELECTEDMEASURE())\");\r\ncg_pct_of_other.FormatStringExpression = \"\\\"0.00%\\\"\"; \r\ncg_pct_of_other.Ordinal = 4 ; \r\n\r\n\r\n//;\r\n                \r\n// creates the total measure for ALLSELECTED\r\n\r\n//{\r\n    //    var newMeasure = factTable.AddMeasure(\r\n    //    \"Total (Based on All Selected from Context Column \" + factTableColumnName + \")\" ,                    // Name\r\n    //    \"CALCULATE([\" +  factMeasureName + \"] , ALLSELECTED( '\" + factTableName  + \"'[\" + factTableColumnName + \"]))\"   // DAX expression\r\n                             // Display Folder\r\n                             //    );\r\n    // Set the format string on the new measure:\r\n    //    newMeasure.FormatString = \"#,0\";\r\n    \r\n    //    newMeasure.IsHidden = true ; \r\n    // Provide some documentation:\r\n    //    newMeasure.Description = \"This measure is the sum of column \" ;\r\n//}\r\n",
+      "Tooltip": "",
+      "ValidContexts": "Model, Measure, CalculationGroupTable, CalculationItem"
     }
   ]
 }
