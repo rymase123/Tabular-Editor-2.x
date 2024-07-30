@@ -8,10 +8,12 @@ if(dateTable == null) return;
 
 (dateTable.Columns["Quarter"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Year Quarter"] as CalculatedTableColumn);
 (dateTable.Columns["Month Name"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Month Number"] as CalculatedTableColumn);
+(dateTable.Columns["Half"] as CalculatedTableColumn).SortByColumn = (Selected.Table.Columns["Half Year"] as CalculatedTableColumn);
 
 // Create Hierarchy
 var h = dateTable.AddHierarchy("Calendar Hierarchy");
 h.AddLevel("Year");
+h.AddLevel("Half");
 h.AddLevel("Quarter");
 h.AddLevel("Month");
 h.AddLevel("Date");
@@ -21,20 +23,20 @@ h.AddLevel("Date");
     
         foreach (var c in dateTable.Columns )
         {
-        c.DisplayFolder = "5. Boolean Fields";
+            c.DisplayFolder = "6. Boolean Fields";
         c.IsHidden = true;
         
         // Organize the date table into folders
             if ( ( c.DataType == DataType.DateTime & c.Name.Contains("Date") ) )
                 {
-                    c.DisplayFolder = "4. Date";
+                    c.DisplayFolder = "5. Date";
                 c.IsHidden = false;
                 c.IsKey = true;
                 }
         
             if ( c.Name == "YYMMDDDD" )
                 {
-                    c.DisplayFolder = "4. Date";
+                    c.DisplayFolder = "5. Date";
                 c.IsHidden = true;
                 }
         
@@ -43,22 +45,32 @@ h.AddLevel("Date");
                 c.DisplayFolder = "1. Year";
                 c.IsHidden = false;
                 }
-        
+            
+            if ( c.Name.Contains("Half") & c.DataType != DataType.Boolean )
+                {
+                c.DisplayFolder = "2. Half";
+                c.IsHidden = false;
+                }
 
         
             if ( c.Name.Contains("Month") & c.DataType != DataType.Boolean )
                 {
-                c.DisplayFolder = "3. Month";
+                    c.DisplayFolder = "4. Month";
                 c.IsHidden = false;
                 }
         
             if ( c.Name.Contains("Quarter") & c.DataType != DataType.Boolean )
                 {
-                c.DisplayFolder = "2. Quarter";
+                    c.DisplayFolder = "3. Quarter";
                 c.IsHidden = false;
                 }
         
         }
         
-    
+//Format Dax of Calendar Table
+        
+
+
+    dateTable.FormatDax();
+     
         

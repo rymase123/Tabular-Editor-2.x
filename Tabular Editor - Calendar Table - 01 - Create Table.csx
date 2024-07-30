@@ -93,15 +93,18 @@ bool measureExists = Model.AllMeasures.Any(m => m.Name == measureName);
         VAR _IntermediateResult = 
             ADDCOLUMNS ( _Base_Calendar,
         
-                    ------------------------------------------
-                    ""Year Number"",           --|
-                    YEAR ([Date]),                          --|-- Year
-                ""Year"" ,                                       --|
-                FORMAT ( [Date], ""YYYY"" ),          --|                                   
+            ------------------------------------------ Year
+                    ""Year Number"",           
+                    YEAR ([Date]),                        
+                ""Year"" ,                                     
+                FORMAT ( [Date], ""YYYY"" ),                                         
                                                             
                                                             
                     ------------------------------------------
-        
+                    ""Half Number"" , IF( QUARTER( [Date] ) = 1 || QUARTER( [Date] ) = 2 , 1 , 2 ) ,
+                    ""Half"" , ""H"" &  IF( QUARTER( [Date] ) = 1 || QUARTER( [Date] ) = 2 , 1 , 2 ) & "" "" & _RefYear ,
+                    ""Half Year"" , _RefYear * 100 + IF( QUARTER( [Date] ) = 1 || QUARTER( [Date] ) = 2 , 1 , 2 ) ,
+                    
                     ------------------------------------------
                     ""Quarter"",       --|
                     ""Q"" &                                   --|-- Quarter
